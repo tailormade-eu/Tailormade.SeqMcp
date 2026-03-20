@@ -3,7 +3,6 @@ import { homedir } from "os";
 import { join } from "path";
 import { loadPrefs } from "./prefs.js";
 
-
 function historyPath(): string {
   const url = process.env.SEQ_SERVER_URL ?? "";
   try {
@@ -13,6 +12,8 @@ function historyPath(): string {
     return join(homedir(), ".seq-mcp-history.json");
   }
 }
+
+const HISTORY_PATH = historyPath();
 
 export interface QueryEntry {
   filter?: string;
@@ -33,10 +34,9 @@ export interface SeqHistory {
 }
 
 function load(): SeqHistory {
-  const path = historyPath();
-  if (!existsSync(path)) return { queries: [], systems: {} };
+  if (!existsSync(HISTORY_PATH)) return { queries: [], systems: {} };
   try {
-    return JSON.parse(readFileSync(path, "utf-8"));
+    return JSON.parse(readFileSync(HISTORY_PATH, "utf-8"));
   } catch {
     return { queries: [], systems: {} };
   }
@@ -57,11 +57,10 @@ function prune(h: SeqHistory): void {
 
 function save(h: SeqHistory): void {
   prune(h);
-  const path = historyPath();
   try {
-    writeFileSync(path, JSON.stringify(h, null, 2), "utf-8");
-  } catch {
-    // silently ignore write errors (e.g. read-only filesystem)
+    writeFileSync(HISTORY_PATH, JSON.stringify(h, null, 2), "utf-8");
+  } catch (e) {
+    console.error("seq-mcp: failed to write history file:", e);
   }
 }
 
@@ -90,7 +89,7 @@ export function clearQueriesOlderThan(days: number): number {
 }
 
 export function historyFile(): string {
-  return historyPath();
+  return HISTORY_PATH;
 }
 
 export function loadHistory(): SeqHistory {
@@ -134,13 +133,12 @@ export function recordQuery(
   };
 
   const recent = h.queries.slice(0, 5);
-  const isDuplicate = recent.some((q) => q.filter === entry.filter);
+  const isDuplicate = recent.some(
+    (q) => q.filter === entry.filter && q.startedAt === entry.startedAt && q.endedAt === entry.endedAt
+  );
   if (!isDuplicate) {
     h.queries.unshift(entry);
-    const prefs = loadPrefs();
-    h.queries = h.queries
-      .sort((a, b) => new Date(b.usedAt).getTime() - new Date(a.usedAt).getTime())
-      .slice(0, prefs.maxHistoryQueries);
+    h.queries = h.queries.slice(0, loadPrefs().maxHistoryQueries);
   }
 
   save(h);

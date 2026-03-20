@@ -63,7 +63,7 @@ export function registerHistoryTools(server: McpServer): void {
     {
       what: z.enum(["all", "queries", "systems", "system", "queries_older_than"]).describe("'all' = everything | 'queries' = query history only | 'systems' = all discovered systems/properties | 'system' = one system by name (requires system param) | 'queries_older_than' = queries older than N days (requires days param)"),
       system: z.string().optional().describe("System name to remove. Only used when what='system'. e.g. 'AramisMarketplace'"),
-      days: z.coerce.number().optional().describe("Number of days threshold. Only used when what='queries_older_than'. e.g. 30"),
+      days: z.coerce.number().min(1).optional().describe("Number of days threshold. Only used when what='queries_older_than'. e.g. 30"),
     },
     async (params) => {
       switch (params.what) {

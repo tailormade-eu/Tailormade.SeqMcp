@@ -45,6 +45,7 @@ Status: ✅ Tested | ⚠️ Partial | ❌ Not tested
 |------|------|--------|-------|
 | `seq_stream` | Long-poll for new events | ✅ | Uses /api/events/scan with wait param (NDJSON) |
 | `seq_stream` | filter + signal combined | ✅ | Works correctly |
+| `seq_stream` | records query in history | ❌ | Not tested |
 | `seq_stream` | afterId scanning | ⚠️ | afterId on scan endpoint scans BACKWARDS, not forward. Use seq_recent for forward polling. |
 | `seq_stream` | No new events (empty response) | ⚠️ | Short wait + non-existent filter gives "fetch failed" — network timeout. Acceptable edge case. |
 
@@ -90,7 +91,8 @@ Status: ✅ Tested | ⚠️ Partial | ❌ Not tested
 | `seq_prefs_update` | Update maxHistoryQueries | ✅ | Changed to 10, verified, reverted to 500 |
 | `seq_prefs_update` | Invalid key | ✅ | Returns "Unknown preference: invalidKey" |
 | `seq_prefs_update` | Non-numeric value for numeric key | ✅ | `historyQueryKeepDays = "banana"` → "must be a number" |
-| `seq_prefs_update` | Negative value for keepDays | ✅ | `historyQueryKeepDays = -5` → "must be a positive number (got: -5)" |
+| `seq_prefs_update` | Negative value for keepDays | ✅ | `historyQueryKeepDays = -5` → "must be a positive integer (got: -5)" |
+| `seq_prefs_update` | Float value for integer key | ❌ | `maxHistoryQueries = 0.5` → "must be a positive integer" |
 
 ## History
 

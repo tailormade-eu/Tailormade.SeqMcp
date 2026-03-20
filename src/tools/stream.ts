@@ -3,6 +3,7 @@ import { z } from "zod";
 import { SeqClient } from "../api/client.js";
 import { formatEvents, FormatMode } from "../api/formatter.js";
 import { loadPrefs } from "../api/prefs.js";
+import { recordQuery } from "../api/history.js";
 
 function respond(text: string) {
   return { content: [{ type: "text" as const, text }] };
@@ -31,6 +32,7 @@ export function registerStreamTools(server: McpServer, client: SeqClient): void 
         wait,
       });
       if (events.length === 0) return respond("No new events within the wait period.");
+      recordQuery({ filter: params.filter }, events);
       const mode: FormatMode = params.format ?? loadPrefs().defaultFormat;
       return respond(formatEvents(events, mode));
     }

@@ -25,14 +25,10 @@ export function registerPrefsTools(server: McpServer): void {
       value: z.string().describe("New value. For hideFields use comma-separated list, e.g. 'ProcessId,ThreadId'"),
     },
     async (params) => {
-      let parsed: unknown = params.value;
-      if (params.key === "maxMessageLength" || params.key === "historyQueryKeepDays" || params.key === "historySystemKeepDays" || params.key === "maxHistoryQueries") {
-        parsed = Number(params.value);
-        if (isNaN(parsed as number)) throw new Error(`${params.key} must be a number`);
-      } else if (params.key === "hideFields") {
-        parsed = params.value.split(",").map((s) => s.trim()).filter(Boolean);
-      }
-      const prefs = updatePref(params.key, parsed);
+      const value: unknown = params.key === "hideFields"
+        ? params.value.split(",").map((s) => s.trim()).filter(Boolean)
+        : params.value;
+      const prefs = updatePref(params.key, value);
       return respond(`Updated. Current preferences:\n${JSON.stringify(prefs, null, 2)}`);
     }
   );

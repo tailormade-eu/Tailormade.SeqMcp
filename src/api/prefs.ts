@@ -33,7 +33,11 @@ export function loadPrefs(): SeqPrefs {
 }
 
 export function savePrefs(prefs: SeqPrefs): void {
-  writeFileSync(PREFS_PATH, JSON.stringify(prefs, null, 2), "utf-8");
+  try {
+    writeFileSync(PREFS_PATH, JSON.stringify(prefs, null, 2), "utf-8");
+  } catch (e) {
+    console.error("seq-mcp: failed to write prefs file:", e);
+  }
 }
 
 export function updatePref(key: string, value: unknown): SeqPrefs {
@@ -42,7 +46,7 @@ export function updatePref(key: string, value: unknown): SeqPrefs {
   const defaultValue = (DEFAULTS as unknown as Record<string, unknown>)[key];
   if (typeof defaultValue === "number") {
     const n = Number(value);
-    if (isNaN(n) || n < 1) throw new Error(`Invalid value for ${key}: must be a positive number (got: ${value})`);
+    if (!Number.isInteger(n) || n < 1) throw new Error(`Invalid value for ${key}: must be a positive integer (got: ${value})`);
     Object.assign(prefs, { [key]: n });
   } else {
     Object.assign(prefs, { [key]: value });

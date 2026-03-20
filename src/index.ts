@@ -1,6 +1,11 @@
 #!/usr/bin/env node
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { readFileSync } from "fs";
+import { join } from "path";
+
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const { version } = JSON.parse(readFileSync(join(__dirname, "../package.json"), "utf-8")) as { version: string };
 import { SeqClient } from "./api/client.js";
 import { registerSearchTools } from "./tools/search.js";
 import { registerSignalTools } from "./tools/signals.js";
@@ -16,13 +21,18 @@ function getRequiredEnv(name: string): string {
   return value;
 }
 
+process.on("unhandledRejection", (err) => {
+  console.error(JSON.stringify({ level: "ERROR", op: "process", msg: "Unhandled rejection", error: String(err) }));
+  process.exit(1);
+});
+
 async function main(): Promise<void> {
   const client = new SeqClient({
     serverUrl: getRequiredEnv("SEQ_SERVER_URL"),
     apiKey: getRequiredEnv("SEQ_API_KEY"),
   });
 
-  const server = new McpServer({ name: "seq-mcp", version: "1.0.0" });
+  const server = new McpServer({ name: "seq-mcp", version });
 
   registerSearchTools(server, client);
   registerSignalTools(server, client);
