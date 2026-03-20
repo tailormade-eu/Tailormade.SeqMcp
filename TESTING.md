@@ -10,9 +10,9 @@ Status: ✅ Tested | ⚠️ Partial | ❌ Not tested
 |------|------|--------|-------|
 | `seq_search` | Structured filter (`@Level = 'Error'`) | ✅ | Returns correct error events |
 | `seq_search` | `@Message like '%keyword%'` filter | ✅ | Correct text search |
-| `seq_search` | filter + signal combined | ✅ | signal-354 (Production) works |
-| `seq_search` | Multiple signals combined | ✅ | `signal-1382,signal-m33301,signal-354` — comma-separated works |
-| `seq_search` | Signals without extra level filter | ✅ | signal-m33301 includes Error + Fatal. Adding `@Level = 'Error'` excludes Fatal events. |
+| `seq_search` | filter + signal combined | ✅ | Signal scoping works |
+| `seq_search` | Multiple signals combined | ✅ | Comma-separated signal IDs work |
+| `seq_search` | Signals without extra level filter | ✅ | Error signals include Fatal. Adding `@Level = 'Error'` excludes Fatal events. |
 | `seq_search` | Date range (startedAt/endedAt) | ✅ | API uses `fromDateUtc`/`toDateUtc`, tool translates. |
 | `seq_search` | count param | ✅ | Correctly limits results |
 | `seq_search` | No results | ✅ | Returns "No events." |
@@ -55,10 +55,12 @@ Status: ✅ Tested | ⚠️ Partial | ❌ Not tested
 | `seq_query` | Basic query (select count) | ✅ | `select count(*) from stream group by System` — 49 systems found |
 | `seq_query` | With rangeStartUtc | ✅ | Required for large datasets to avoid timeout |
 | `seq_query` | Without rangeStartUtc | ✅ | Timeout on `distinct()` over full stream — expected |
-| `seq_query` | With signal | ✅ | `signal-1382,signal-m33301,signal-354` works |
+| `seq_query` | With signal | ✅ | Multiple signals comma-separated works |
 | `seq_query` | format=raw | ✅ | Returns full JSON with Columns, Rows, Statistics |
 | `seq_query` | format=table (default) | ✅ | Columnar output with row count |
 | `seq_query` | Invalid SQL | ✅ | Returns structured error with Reasons: "unexpected identifier, expected stream". Fixed: 400 response parsed as QueryResult. |
+| `seq_query_help` | Returns inline reference docs | ✅ | Full filter + SQL reference returned |
+| `seq_query_help` | Contains ci, regex, Has(), in, now()-1d, SQL structure | ✅ | All sections present and correct |
 
 ## Expression Indexes
 
@@ -83,7 +85,29 @@ Status: ✅ Tested | ⚠️ Partial | ❌ Not tested
 | `seq_prefs_update` | Update defaultFormat | ✅ | Changed to "table", verified, reverted |
 | `seq_prefs_update` | Update maxMessageLength | ✅ | Changed to 200, verified, reverted to 120 |
 | `seq_prefs_update` | Update hideFields | ✅ | Changed to "ProcessId,ThreadId", verified, reverted |
+| `seq_prefs_update` | Update historyQueryKeepDays | ✅ | Changed to 30, verified, reverted to 60 |
+| `seq_prefs_update` | Update historySystemKeepDays | ✅ | Changed to 60, verified |
+| `seq_prefs_update` | Update maxHistoryQueries | ✅ | Changed to 10, verified, reverted to 500 |
 | `seq_prefs_update` | Invalid key | ✅ | Returns "Unknown preference: invalidKey" |
+| `seq_prefs_update` | Non-numeric value for numeric key | ✅ | `historyQueryKeepDays = "banana"` → "must be a number" |
+| `seq_prefs_update` | Negative value for keepDays | ✅ | `historyQueryKeepDays = -5` → "must be a positive number (got: -5)" |
+
+## History
+
+| Tool | Test | Status | Notes |
+|------|------|--------|-------|
+| `seq_history` | Show empty cache | ✅ | Returns "(none yet)" for both sections |
+| `seq_history` | Show after seq_search calls | ✅ | AramisMarketplace + CardoenExportAramis properties populated |
+| `seq_history` | File scoped per SEQ_SERVER_URL hostname | ✅ | `~/.seq-mcp-history-seq.datosonline.be.json` |
+| `seq_history_clear` | Clear all | ✅ | Both queries and systems emptied |
+| `seq_history_clear` | Clear queries only | ✅ | Systems retained, queries gone |
+| `seq_history_clear` | Clear systems only | ✅ | Queries retained, systems gone |
+| `seq_history_clear` | Clear specific system | ✅ | AramisMarketplace removed, others retained |
+| `seq_history_clear` | Clear queries_older_than | ✅ | 0 removed (all recent) — correct |
+| `seq_history_clear` | Unknown system | ✅ | Returns "System not found: NonExistent" |
+| `seq_history` | filter param (matching) | ✅ | `filter=Datos` → DatosServicesLegacy only + matching queries |
+| `seq_history` | filter param (no match) | ✅ | No filter → all systems + all queries |
+| `seq_history` | maxHistoryQueries cap (via prefs) | ✅ | Set to 10 via seq_prefs_update, applied on next recordQuery |
 
 ## Formatter
 

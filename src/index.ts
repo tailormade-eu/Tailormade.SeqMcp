@@ -8,6 +8,7 @@ import { registerRecentTools } from "./tools/recent.js";
 import { registerStreamTools } from "./tools/stream.js";
 import { registerPrefsTools } from "./tools/prefs.js";
 import { registerQueryTools } from "./tools/query.js";
+import { registerHistoryTools } from "./tools/history.js";
 
 function getRequiredEnv(name: string): string {
   const value = process.env[name];
@@ -29,6 +30,7 @@ async function main(): Promise<void> {
   registerStreamTools(server, client);
   registerPrefsTools(server);
   registerQueryTools(server, client);
+  registerHistoryTools(server);
 
   const transport = new StdioServerTransport();
   await server.connect(transport);

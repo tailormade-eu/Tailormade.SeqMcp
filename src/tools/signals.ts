@@ -10,7 +10,7 @@ function respond(text: string) {
 export function registerSignalTools(server: McpServer, client: SeqClient): void {
   server.tool(
     "seq_signals",
-    "List all available Seq signals (cached 10 min). Signals are saved filters/groups like 'Production', 'Errors', 'Warnings'. Use the returned signal ID in seq_search, seq_recent, seq_stream, or seq_query.\n\nllmTip: Call this first to discover which signals exist before filtering. Signal IDs are stable and look like 'signal-NNN'. Signals can be combined with filter expressions.",
+    "List all available Seq signals (cached 10 min). Signals are saved filters/groups like 'Production', 'Errors', 'Warnings'. Use the returned signal ID in seq_search, seq_recent, seq_stream, or seq_query.\n\nllmTip: NOTE: call this before filtering — signal IDs are required and look like 'signal-NNN'. NOTE: signals can be combined with filter expressions and with each other (comma-separated).",
     {
       format: z.enum(["compact", "table", "detail", "raw"]).optional()
         .describe("Output format: table (default), detail, or raw (full JSON)"),

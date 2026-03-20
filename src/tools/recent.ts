@@ -3,6 +3,7 @@ import { z } from "zod";
 import { SeqClient } from "../api/client.js";
 import { formatEvents, FormatMode } from "../api/formatter.js";
 import { loadPrefs } from "../api/prefs.js";
+import { recordQuery } from "../api/history.js";
 
 function respond(text: string) {
   return { content: [{ type: "text" as const, text }] };
@@ -11,10 +12,10 @@ function respond(text: string) {
 export function registerRecentTools(server: McpServer, client: SeqClient): void {
   server.tool(
     "seq_recent",
-    "Fetch the most recent events from Seq (compact format). Use afterId to poll for new events since a previous call. For continuous monitoring, use seq_stream instead.\n\nllmTip: Polling pattern: first call without afterId, then pass the newest event's Id as afterId in subsequent calls. Use `filter` with `@Message like '%keyword%'` for text search, or structured filters like `@Level = 'Error'`.",
+    "Fetch the most recent events from Seq. Use afterId to poll for new events since a previous call. For continuous monitoring, use seq_stream instead.\n\nllmTip: NOTE: polling pattern — first call without afterId, then pass the newest event Id as afterId in subsequent calls. EXAMPLE: text search: `@Message like '%keyword%'` | structured: `@Level = 'Error'` | combined: `System = 'X' and @Level = 'Error'`.",
     {
       filter: z.string().optional().describe("Seq filter expression. For text search: @Message like '%keyword%'. For structured: @Level = 'Error'. Combine with and/or."),
-      signal: z.string().optional().describe("Signal ID to filter by, e.g. signal-354"),
+      signal: z.string().optional().describe("Signal ID to filter by. Use seq_signals to discover available IDs."),
       count: z.coerce.number().optional().describe("Max events to return (default 10)"),
       afterId: z.string().optional().describe("Only return events newer than this event ID. Use for polling: pass the Id of the last event from your previous call."),
       format: z.enum(["compact", "table", "detail", "raw"]).optional()
@@ -27,6 +28,7 @@ export function registerRecentTools(server: McpServer, client: SeqClient): void 
         count: params.count ?? 10,
         afterId: params.afterId,
       });
+      recordQuery({ filter: params.filter }, events);
       const mode: FormatMode = params.format ?? loadPrefs().defaultFormat;
       return respond(formatEvents(events, mode));
     }
