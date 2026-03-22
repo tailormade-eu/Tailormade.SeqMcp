@@ -4,10 +4,7 @@ import { SeqClient } from "../api/client.js";
 import { formatEvents, FormatMode } from "../api/formatter.js";
 import { loadPrefs } from "../api/prefs.js";
 import { recordQuery } from "../api/history.js";
-
-function respond(text: string) {
-  return { content: [{ type: "text" as const, text }] };
-}
+import { respond } from "./utils.js";
 
 export function registerRecentTools(server: McpServer, client: SeqClient): void {
   server.tool(

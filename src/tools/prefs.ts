@@ -1,10 +1,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { loadPrefs, updatePref } from "../api/prefs.js";
-
-function respond(text: string) {
-  return { content: [{ type: "text" as const, text }] };
-}
+import { respond } from "./utils.js";
 
 export function registerPrefsTools(server: McpServer): void {
   server.tool(

@@ -1,10 +1,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { loadHistory, clearHistory, clearSystem, clearQueriesOlderThan, historyFile } from "../api/history.js";
-
-function respond(text: string) {
-  return { content: [{ type: "text" as const, text }] };
-}
+import { respond } from "./utils.js";
 
 export function registerHistoryTools(server: McpServer): void {
   server.tool(

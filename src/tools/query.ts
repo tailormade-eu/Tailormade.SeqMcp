@@ -1,10 +1,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { SeqClient } from "../api/client.js";
-
-function respond(text: string) {
-  return { content: [{ type: "text" as const, text }] };
-}
+import { respond } from "./utils.js";
 
 function formatQueryResult(result: { Columns?: string[]; Rows?: unknown[][]; Error?: string; Suggestion?: string }): string {
   if (result.Error) {

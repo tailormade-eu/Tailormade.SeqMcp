@@ -2,10 +2,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { SeqClient } from "../api/client.js";
 import { formatSignals, FormatMode } from "../api/formatter.js";
-
-function respond(text: string) {
-  return { content: [{ type: "text" as const, text }] };
-}
+import { respond } from "./utils.js";
 
 export function registerSignalTools(server: McpServer, client: SeqClient): void {
   server.tool(

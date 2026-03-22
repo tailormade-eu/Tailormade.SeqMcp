@@ -101,6 +101,12 @@ export class SeqClient {
     return parsed;
   }
 
+  private async _fetchEvents(params: Record<string, string>): Promise<unknown[]> {
+    const data = await this.request<unknown>("/api/events", params);
+    if (!Array.isArray(data)) throw new Error(`Seq API returned unexpected response type: ${typeof data}`);
+    return data as unknown[];
+  }
+
   async search(opts: {
     filter?: string;
     signal?: string;
@@ -115,9 +121,7 @@ export class SeqClient {
     if (opts.count != null && opts.count > 0) params.count = String(opts.count);
     if (opts.startedAt) params.fromDateUtc = opts.startedAt;
     if (opts.endedAt) params.toDateUtc = opts.endedAt;
-    const data = await this.request<unknown>("/api/events", params);
-    if (!Array.isArray(data)) throw new Error(`Seq API returned unexpected response type: ${typeof data}`);
-    return data as unknown[];
+    return this._fetchEvents(params);
   }
 
   async getEvent(eventId: string): Promise<unknown> {
@@ -146,9 +150,7 @@ export class SeqClient {
     if (opts.signal) params.signal = opts.signal;
     if (opts.count != null && opts.count > 0) params.count = String(opts.count);
     if (opts.afterId) params.afterId = opts.afterId;
-    const data = await this.request<unknown>("/api/events", params);
-    if (!Array.isArray(data)) throw new Error(`Seq API returned unexpected response type: ${typeof data}`);
-    return data as unknown[];
+    return this._fetchEvents(params);
   }
 
   async scan(opts: {
