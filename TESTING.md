@@ -124,3 +124,10 @@ Status: ✅ Tested | ⚠️ Partial | ❌ Not tested
 | Detail format | Full event with properties | ✅ | |
 | Exception truncation | First 3 lines in compact | ✅ | |
 | maxMessageLength | Truncation at 120 chars | ✅ | |
+
+## Lint
+
+| Check | Test | Status | Notes |
+|-------|------|--------|-------|
+| ESLint | `npm run lint` (eslint src/ + tsc --noEmit) | ✅ | TypeScript ESLint recommended rules, no-unused-vars (error), no-explicit-any (warn) |
+| Build | `npm run build` | ✅ | Still compiles cleanly after ESLint setup |

@@ -4,7 +4,6 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { readFileSync } from "fs";
 import { join } from "path";
 
-// eslint-disable-next-line @typescript-eslint/no-require-imports
 const { version } = JSON.parse(readFileSync(join(__dirname, "../package.json"), "utf-8")) as { version: string };
 import { SeqClient } from "./api/client.js";
 import { registerSearchTools } from "./tools/search.js";
