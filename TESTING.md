@@ -46,7 +46,7 @@ Status: ✅ Tested | ⚠️ Partial | ❌ Not tested
 | `seq_stream` | Long-poll for new events | ✅ | Uses /api/events/scan with wait param (NDJSON) |
 | `seq_stream` | filter + signal combined | ✅ | Works correctly |
 | `seq_stream` | records query in history | ✅ | filter + systems recorded in history after scan |
-| `seq_stream` | afterId scanning | ⚠️ | afterId on scan endpoint scans BACKWARDS, not forward. Use seq_recent for forward polling. |
+| `seq_stream` | afterId removed | ✅ | afterId param removed — scan endpoint scans BACKWARDS, causing confusion. Use seq_recent for forward polling. |
 | `seq_stream` | No new events (empty response) | ⚠️ | Short wait + non-existent filter gives "fetch failed" — network timeout. Acceptable edge case. |
 
 ## Query
