@@ -55,8 +55,7 @@ function prune(h: SeqHistory, prefs: SeqPrefs): void {
   h.queries = h.queries.filter((q) => new Date(q.usedAt).getTime() >= queryCutoff);
 }
 
-function save(h: SeqHistory, prefs?: SeqPrefs): void {
-  prune(h, prefs ?? loadPrefs());
+function saveRaw(h: SeqHistory): void {
   try {
     writeFileSync(HISTORY_PATH, JSON.stringify(h, null, 2), "utf-8");
   } catch (e) {
@@ -64,18 +63,23 @@ function save(h: SeqHistory, prefs?: SeqPrefs): void {
   }
 }
 
+function save(h: SeqHistory, prefs?: SeqPrefs): void {
+  prune(h, prefs ?? loadPrefs());
+  saveRaw(h);
+}
+
 export function clearHistory(what: "all" | "queries" | "systems"): void {
   const h = load();
   if (what === "all" || what === "queries") h.queries = [];
   if (what === "all" || what === "systems") h.systems = {};
-  save(h);
+  saveRaw(h);
 }
 
 export function clearSystem(system: string): boolean {
   const h = load();
   if (!(system in h.systems)) return false;
   delete h.systems[system];
-  save(h);
+  saveRaw(h);
   return true;
 }
 
@@ -84,7 +88,7 @@ export function clearQueriesOlderThan(days: number): number {
   const cutoff = Date.now() - days * 24 * 60 * 60 * 1000;
   const before = h.queries.length;
   h.queries = h.queries.filter((q) => new Date(q.usedAt).getTime() >= cutoff);
-  save(h);
+  saveRaw(h);
   return before - h.queries.length;
 }
 

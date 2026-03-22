@@ -38,7 +38,7 @@ describe("loadHistory", () => {
 });
 
 describe("prune", () => {
-  it("removes entries older than keepDays", () => {
+  it("clearHistory does NOT prune unrelated sections", () => {
     const oldDate = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString();
     const recentDate = new Date().toISOString();
     const path = historyFile();
@@ -54,15 +54,35 @@ describe("prune", () => {
       },
     });
 
-    // Trigger save (which calls prune) via clearHistory
+    // clearHistory("queries") should only clear queries — NOT prune old systems
     clearHistory("queries");
-    // After clearing queries, reload
     const h = loadHistory();
-    // queries were cleared explicitly
     expect(h.queries).toEqual([]);
-    // OldSystem should be pruned, RecentSystem kept
-    expect(h.systems).not.toHaveProperty("OldSystem");
+    // OldSystem must survive — clearHistory must not prune
+    expect(h.systems).toHaveProperty("OldSystem");
     expect(h.systems).toHaveProperty("RecentSystem");
+  });
+
+  it("clearHistory(systems) does NOT prune old queries", () => {
+    const oldDate = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString();
+    const recentDate = new Date().toISOString();
+    const path = historyFile();
+
+    fileStore[path] = JSON.stringify({
+      queries: [
+        { filter: "old-query", usedAt: oldDate, systems: [] },
+        { filter: "recent-query", usedAt: recentDate, systems: [] },
+      ],
+      systems: {
+        OldSystem: { properties: ["A"], lastUsed: oldDate },
+      },
+    });
+
+    clearHistory("systems");
+    const h = loadHistory();
+    expect(h.systems).toEqual({});
+    // Old query must survive — clearHistory must not prune
+    expect(h.queries).toHaveLength(2);
   });
 
   it("prune removes old queries and systems via recordQuery (date-based)", () => {
