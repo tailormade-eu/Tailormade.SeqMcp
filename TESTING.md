@@ -76,14 +76,16 @@ Status: ✅ Tested | ⚠️ Partial | ❌ Not tested
 |------|------|--------|-------|
 | `seq_fields` | Discover fields for a system | ✅ | `System = 'MediaFilesMigration'` — found 18 fields with sample values |
 | `seq_fields` | sampleSize param | ✅ | sampleSize=10 works, returns correct sample count |
+| `seq_fields` | Cache key includes sampleSize | ✅ | sampleSize=5 (33 fields) vs sampleSize=20 (45 fields) → separate cache entries. v1.1.1 fix verified. |
 | `seq_fields` | Caching | ✅ | Same filter returns cached result within 10 min TTL |
 
 ## Preferences
 
 | Tool | Test | Status | Notes |
 |------|------|--------|-------|
-| `seq_prefs` | Show preferences | ✅ | Returns JSON with hideFields, defaultFormat, maxMessageLength |
+| `seq_prefs` | Show preferences | ✅ | Shows all keys with valid values + current value labeled. v1.1.1 output format verified. |
 | `seq_prefs_update` | Update defaultFormat | ✅ | Changed to "table", verified, reverted |
+| `seq_prefs_update` | Invalid defaultFormat | ✅ | `defaultFormat = "invalid"` → "must be one of compact, table, detail, raw". v1.1.1 enum validation verified. |
 | `seq_prefs_update` | Update maxMessageLength | ✅ | Changed to 200, verified, reverted to 120 |
 | `seq_prefs_update` | Update hideFields | ✅ | Changed to "ProcessId,ThreadId", verified, reverted |
 | `seq_prefs_update` | Update historyQueryKeepDays | ✅ | Changed to 30, verified, reverted to 60 |
