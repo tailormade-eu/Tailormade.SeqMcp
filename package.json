@@ -1,6 +1,6 @@
 {
   "name": "@tailormade/seq-mcp",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "MCP server for Seq structured logging — search, signals, live events.",
   "main": "dist/index.js",
   "bin": {

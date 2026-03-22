@@ -77,8 +77,8 @@ describe("updatePref", () => {
     expect(() => updatePref("unknownKey", "value")).toThrow("Unknown preference");
   });
 
-  it("hideFields string value is stored as-is", () => {
+  it("hideFields string value is split to array", () => {
     const result = updatePref("hideFields", "ProcessId,ThreadId");
-    expect(result.hideFields).toBe("ProcessId,ThreadId");
+    expect(result.hideFields).toEqual(["ProcessId", "ThreadId"]);
   });
 });

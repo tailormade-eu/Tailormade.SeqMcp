@@ -34,10 +34,7 @@ export function registerPrefsTools(server: McpServer): void {
       value: z.string().describe("New value. For hideFields use comma-separated list, e.g. 'ProcessId,ThreadId'"),
     },
     async (params) => {
-      const value: unknown = params.key === "hideFields"
-        ? params.value.split(",").map((s) => s.trim()).filter(Boolean)
-        : params.value;
-      const prefs = updatePref(params.key, value);
+      const prefs = updatePref(params.key, params.value);
       return respond(`Updated. Current preferences:\n${JSON.stringify(prefs, null, 2)}`);
     }
   );

@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.1.2] - 2026-03-22
+
+### Added
+- 47 automated unit tests (vitest) — prefs, formatter, history, client
+- CLAUDE.md in repo root with full architecture docs
+
+### Fixed
+- `count: 0` falsy-check in search/recent/scan — `if (opts.count)` skipped count:0
+- NDJSON parser crash on malformed lines — now logs and skips instead of crashing
+- `formatDetail()` called `loadPrefs()` per event — prefs now loaded once and passed as param
+- `seq_stream` afterId param removed — scan endpoint scans backwards, was misleading
+- `hideFields` validation in `updatePref()` — requires string, splits to array
+- Switch exhaustiveness in `tools/history.ts` — explicit `never` guard on default
+- `seq_prefs_update` tool double-split bug — tool pre-split hideFields to array before passing to `updatePref` which expected a string
+- Client-specific references removed from TESTING.md (public repo compliance)
+- Unit test aligned with hideFields validation change (string→array split)
+
+---
+
 ## [1.1.1] - 2026-03-22
 
 ### Added
