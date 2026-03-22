@@ -85,7 +85,16 @@ export class SeqClient {
     }
     const text = await res.text();
     if (!text.trim()) return [];
-    return text.trim().split("\n").map((line) => JSON.parse(line));
+    const lines = text.trim().split("\n");
+    const parsed: unknown[] = [];
+    for (const line of lines) {
+      try {
+        parsed.push(JSON.parse(line));
+      } catch {
+        console.error(`[seq-mcp] Failed to parse NDJSON line: ${line.slice(0, 100)}`);
+      }
+    }
+    return parsed;
   }
 
   async search(opts: {
@@ -98,7 +107,7 @@ export class SeqClient {
     const params: Record<string, string> = {};
     if (opts.filter) params.filter = opts.filter;
     if (opts.signal) params.signal = opts.signal;
-    if (opts.count) params.count = String(opts.count);
+    if (opts.count != null && opts.count > 0) params.count = String(opts.count);
     if (opts.startedAt) params.fromDateUtc = opts.startedAt;
     if (opts.endedAt) params.toDateUtc = opts.endedAt;
     return this.request<unknown[]>("/api/events", params);
@@ -127,7 +136,7 @@ export class SeqClient {
     const params: Record<string, string> = {};
     if (opts.filter) params.filter = opts.filter;
     if (opts.signal) params.signal = opts.signal;
-    if (opts.count) params.count = String(opts.count ?? 10);
+    if (opts.count != null && opts.count > 0) params.count = String(opts.count);
     if (opts.afterId) params.afterId = opts.afterId;
     return this.request<unknown[]>("/api/events", params);
   }
@@ -142,7 +151,7 @@ export class SeqClient {
     const params: Record<string, string> = {};
     if (opts.filter) params.filter = opts.filter;
     if (opts.signal) params.signal = opts.signal;
-    if (opts.count) params.count = String(opts.count ?? 10);
+    if (opts.count != null && opts.count > 0) params.count = String(opts.count);
     if (opts.afterId) params.afterId = opts.afterId;
     params.wait = String(opts.wait ?? 5000);
     return this.requestNdjson("/api/events/scan", params);
