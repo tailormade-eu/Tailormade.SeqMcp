@@ -82,9 +82,9 @@ function exceptionHead(e: SeqEvent, lines = 3): string {
 
 function formatCompact(events: SeqEvent[], maxLen: number): string {
   if (events.length === 0) return "No events.";
-  const first = ts(events[events.length - 1]?.Timestamp);
-  const last = ts(events[0]?.Timestamp);
-  const lines: string[] = [`${events.length} events | ${first} - ${last}`, ""];
+  const oldest = ts(events[events.length - 1]?.Timestamp);
+  const newest = ts(events[0]?.Timestamp);
+  const lines: string[] = [`${events.length} events | ${oldest} - ${newest}`, ""];
 
   for (const e of events) {
     const sys = system(e);
@@ -115,6 +115,7 @@ function formatTable(events: SeqEvent[], maxLen: number): string {
     msg: message(e, maxLen),
   }));
 
+  if (rows.length === 0) return "No events.";
   const w = {
     time: 8,
     level: 5,

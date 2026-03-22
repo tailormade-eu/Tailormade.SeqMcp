@@ -50,6 +50,9 @@ export class SeqClient {
     return res.json() as Promise<T>;
   }
 
+  // Note: 400 responses are returned as success for /api/data (query endpoint) —
+  // the response body contains structured error info (Error, Suggestion fields).
+  // This is intentional and expected only for query endpoints.
   private async post<T>(path: string, params: Record<string, string> = {}, body?: unknown): Promise<T> {
     const url = new URL(path, this.baseUrl);
     for (const [k, v] of Object.entries(params)) {
@@ -88,6 +91,7 @@ export class SeqClient {
     const lines = text.trim().split("\n");
     const parsed: unknown[] = [];
     for (const line of lines) {
+      if (!line.trim()) continue;
       try {
         parsed.push(JSON.parse(line));
       } catch {
@@ -111,7 +115,9 @@ export class SeqClient {
     if (opts.count != null && opts.count > 0) params.count = String(opts.count);
     if (opts.startedAt) params.fromDateUtc = opts.startedAt;
     if (opts.endedAt) params.toDateUtc = opts.endedAt;
-    return this.request<unknown[]>("/api/events", params);
+    const data = await this.request<unknown>("/api/events", params);
+    if (!Array.isArray(data)) throw new Error(`Seq API returned unexpected response type: ${typeof data}`);
+    return data as unknown[];
   }
 
   async getEvent(eventId: string): Promise<unknown> {
@@ -140,7 +146,9 @@ export class SeqClient {
     if (opts.signal) params.signal = opts.signal;
     if (opts.count != null && opts.count > 0) params.count = String(opts.count);
     if (opts.afterId) params.afterId = opts.afterId;
-    return this.request<unknown[]>("/api/events", params);
+    const data = await this.request<unknown>("/api/events", params);
+    if (!Array.isArray(data)) throw new Error(`Seq API returned unexpected response type: ${typeof data}`);
+    return data as unknown[];
   }
 
   async scan(opts: {
@@ -210,6 +218,7 @@ export class SeqClient {
     }
 
     const result = { fields, sampleCount: events.length };
+    if (this.fieldValuesCache.size >= 50) this.fieldValuesCache.clear();
     this.fieldValuesCache.set(cacheKey, { data: result, fetchedAt: now });
     return result;
   }

@@ -178,7 +178,7 @@ export function registerQueryTools(server: McpServer, client: SeqClient): void {
     "Execute a SQL query against Seq event data. Returns tabular results. Supports SELECT, COUNT, DISTINCT, GROUP BY, ORDER BY, LIMIT.\n\nllmTip: CRITICAL: use `from stream` not `from events` — wrong table name returns empty results. NOTE: strings are single-quoted. WARNING: always set rangeStartUtc — without it the query scans all time and will timeout on large datasets. EXAMPLE: `select count(*) from stream group by System limit 50` | `select count(*) from stream where System = 'MyApp' group by RequestPath` | `select count(*) from stream where @Level = 'Error' group by System`.",
     {
       q: z.string().describe("SQL query. Must use 'from stream'. Example: select distinct(System) from stream limit 50"),
-      rangeStartUtc: z.string().optional().describe("Start of time range, ISO8601. Default: last 24h"),
+      rangeStartUtc: z.string().optional().describe("Start of time range, ISO8601. Optional. If omitted, Seq searches the full event stream (may time out on large datasets — recommended to always provide)"),
       rangeEndUtc: z.string().optional().describe("End of time range, ISO8601"),
       signal: z.string().optional().describe("Signal ID to scope the query. Use seq_signals to discover available IDs."),
       timeout: z.coerce.number().optional().describe("Query timeout in ms (default 30000)"),

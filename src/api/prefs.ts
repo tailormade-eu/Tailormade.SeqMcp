@@ -33,7 +33,7 @@ export function clearPrefsCache(): void {
 
 export function loadPrefs(): SeqPrefs {
   const now = Date.now();
-  if (cachedPrefs && now - cacheTime < CACHE_TTL_MS) return { ...cachedPrefs };
+  if (cachedPrefs && now - cacheTime < CACHE_TTL_MS) return { ...cachedPrefs, hideFields: [...cachedPrefs.hideFields] };
 
   let result: SeqPrefs;
   if (!existsSync(PREFS_PATH)) {

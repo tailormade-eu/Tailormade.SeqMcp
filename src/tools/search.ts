@@ -48,8 +48,9 @@ export function registerSearchTools(server: McpServer, client: SeqClient): void 
     },
     async (params) => {
       const event = await client.getEvent(params.eventId);
+      const prefs = loadPrefs();
       const mode: FormatMode = params.format ?? "detail";
-      return respond(formatEvents([event], mode));
+      return respond(formatEvents([event], mode, prefs));
     }
   );
 }
