@@ -127,6 +127,16 @@ Status: ✅ Tested | ⚠️ Partial | ❌ Not tested
 | Exception truncation | First 3 lines in compact | ✅ | |
 | maxMessageLength | Truncation at 120 chars | ✅ | |
 
+## Automated Unit Tests
+
+| Module | Tests | Status | Notes |
+|--------|-------|--------|-------|
+| `prefs.ts` | loadPrefs defaults, merge, corrupt JSON; updatePref valid/invalid | ✅ | 11 tests, fs mocked |
+| `formatter.ts` | all 4 formats, empty array, truncation, exception, Properties formats, tokens | ✅ | 16 tests, prefs mocked |
+| `history.ts` | prune, recordQuery, dedup, cap, clearHistory, Properties formats | ✅ | 11 tests, fs+prefs mocked |
+| `client.ts` | discoverFields normalization, cache key, API key header, error handling | ✅ | 9 tests, fetch mocked |
+| **Total** | **47 tests** | ✅ | `npm test` — vitest, zero API calls |
+
 ## Lint
 
 | Check | Test | Status | Notes |
