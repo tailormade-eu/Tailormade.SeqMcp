@@ -40,25 +40,44 @@ export function savePrefs(prefs: SeqPrefs): void {
   }
 }
 
+type PrefKey = keyof SeqPrefs;
+
+function validatePositiveInt(key: string, value: unknown): number {
+  const n = Number(value);
+  if (!Number.isInteger(n) || n < 1) throw new Error(`Invalid value for ${key}: must be a positive integer (got: ${value})`);
+  return n;
+}
+
 export function updatePref(key: string, value: unknown): SeqPrefs {
   const prefs = loadPrefs();
   if (!(key in DEFAULTS)) throw new Error(`Unknown preference: ${key}`);
-  const defaultValue = (DEFAULTS as unknown as Record<string, unknown>)[key];
-  if (key === "defaultFormat") {
-    const valid = ["compact", "table", "detail", "raw"];
-    if (!valid.includes(value as string)) throw new Error(`Invalid value for defaultFormat: must be one of ${valid.join(", ")} (got: ${value})`);
+  const typedKey = key as PrefKey;
+
+  switch (typedKey) {
+    case "defaultFormat": {
+      const valid = ["compact", "table", "detail", "raw"];
+      if (!valid.includes(value as string)) throw new Error(`Invalid value for defaultFormat: must be one of ${valid.join(", ")} (got: ${value})`);
+      prefs.defaultFormat = value as SeqPrefs["defaultFormat"];
+      break;
+    }
+    case "hideFields": {
+      if (typeof value !== "string") throw new Error(`Invalid value for hideFields: must be a comma-separated string (got: ${typeof value})`);
+      prefs.hideFields = value.split(",").map((s) => s.trim()).filter(Boolean);
+      break;
+    }
+    case "maxMessageLength":
+    case "historyQueryKeepDays":
+    case "historySystemKeepDays":
+    case "maxHistoryQueries": {
+      prefs[typedKey] = validatePositiveInt(typedKey, value);
+      break;
+    }
+    default: {
+      const _exhaustive: never = typedKey;
+      throw new Error(`Unknown preference: ${_exhaustive}`);
+    }
   }
-  if (key === "hideFields") {
-    if (typeof value !== "string") throw new Error(`Invalid value for hideFields: must be a comma-separated string (got: ${typeof value})`);
-    const arr = value.split(",").map((s) => s.trim()).filter(Boolean);
-    Object.assign(prefs, { [key]: arr });
-  } else if (typeof defaultValue === "number") {
-    const n = Number(value);
-    if (!Number.isInteger(n) || n < 1) throw new Error(`Invalid value for ${key}: must be a positive integer (got: ${value})`);
-    Object.assign(prefs, { [key]: n });
-  } else {
-    Object.assign(prefs, { [key]: value });
-  }
+
   savePrefs(prefs);
   return prefs;
 }
