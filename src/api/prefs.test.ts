@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { loadPrefs, updatePref } from "./prefs.js";
+import { loadPrefs, updatePref, DEFAULTS } from "./prefs.js";
 
 vi.mock("fs", () => ({
   existsSync: vi.fn(() => false),
@@ -8,15 +8,6 @@ vi.mock("fs", () => ({
 }));
 
 import { existsSync, readFileSync, writeFileSync } from "fs";
-
-const DEFAULTS = {
-  hideFields: ["ProcessId", "ThreadId", "EventId"],
-  defaultFormat: "compact",
-  maxMessageLength: 120,
-  historyQueryKeepDays: 60,
-  historySystemKeepDays: 60,
-  maxHistoryQueries: 500,
-};
 
 beforeEach(() => {
   vi.mocked(existsSync).mockReturnValue(false);

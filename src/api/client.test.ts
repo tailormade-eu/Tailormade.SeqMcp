@@ -13,6 +13,23 @@ function jsonResponse(data: unknown, status = 200) {
   };
 }
 
+function emptyResponse(status = 204) {
+  return {
+    ok: status >= 200 && status < 300,
+    status,
+    json: () => Promise.reject(new Error("No body")),
+    text: () => Promise.resolve(""),
+  };
+}
+
+function ndjsonResponse(lines: string[], status = 200) {
+  return {
+    ok: status >= 200 && status < 300,
+    status,
+    text: () => Promise.resolve(lines.join("\n")),
+  };
+}
+
 let client: SeqClient;
 
 beforeEach(() => {
@@ -118,5 +135,62 @@ describe("error handling", () => {
     });
 
     await expect(client.search({})).rejects.toThrow("Seq API 500");
+  });
+});
+
+describe("scan (NDJSON)", () => {
+  it("parses valid NDJSON lines", async () => {
+    mockFetch.mockResolvedValueOnce(ndjsonResponse([
+      JSON.stringify({ Id: "event-1" }),
+      JSON.stringify({ Id: "event-2" }),
+    ]));
+    const result = await client.scan({});
+    expect(result).toHaveLength(2);
+    expect((result[0] as { Id: string }).Id).toBe("event-1");
+  });
+
+  it("partial-fail: skips invalid line, keeps valid ones", async () => {
+    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+    mockFetch.mockResolvedValueOnce(ndjsonResponse([
+      JSON.stringify({ Id: "event-1" }),
+      "NOT VALID JSON",
+      JSON.stringify({ Id: "event-3" }),
+    ]));
+    const result = await client.scan({});
+    expect(result).toHaveLength(2);
+    expect((result[0] as { Id: string }).Id).toBe("event-1");
+    expect((result[1] as { Id: string }).Id).toBe("event-3");
+    expect(spy).toHaveBeenCalledOnce();
+    spy.mockRestore();
+  });
+
+  it("empty response returns empty array", async () => {
+    mockFetch.mockResolvedValueOnce(emptyResponse(200));
+    const result = await client.scan({});
+    expect(result).toEqual([]);
+  });
+
+  it("whitespace-only lines are skipped", async () => {
+    mockFetch.mockResolvedValueOnce(ndjsonResponse([
+      "  ",
+      JSON.stringify({ Id: "event-1" }),
+      "   ",
+    ]));
+    // whitespace-only lines will fail JSON.parse but that's the current behavior
+    // The important thing is valid lines are still parsed
+    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const result = await client.scan({});
+    expect(result).toHaveLength(1);
+    expect((result[0] as { Id: string }).Id).toBe("event-1");
+    spy.mockRestore();
+  });
+
+  it("throws on non-OK NDJSON response", async () => {
+    mockFetch.mockResolvedValueOnce({
+      ok: false,
+      status: 502,
+      text: () => Promise.resolve("Bad Gateway"),
+    });
+    await expect(client.scan({})).rejects.toThrow("Seq API 502");
   });
 });

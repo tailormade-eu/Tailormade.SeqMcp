@@ -11,7 +11,7 @@ vi.mock("./prefs.js", () => ({
   })),
 }));
 
-import { formatEvents, formatSignals } from "./formatter.js";
+import { formatEvents, formatSignals, type FormatMode } from "./formatter.js";
 
 const makeEvent = (overrides: Record<string, unknown> = {}) => ({
   Id: "event-abc123",
@@ -138,6 +138,12 @@ describe("formatEvents", () => {
       const result = formatEvents([event], "compact");
       expect(result).toContain("ArrApp");
       expect(result).toContain("/arr");
+    });
+  });
+
+  describe("unknown format mode", () => {
+    it("throws on unknown mode", () => {
+      expect(() => formatEvents([makeEvent()], "banana" as FormatMode)).toThrow("Unknown format mode: banana");
     });
   });
 

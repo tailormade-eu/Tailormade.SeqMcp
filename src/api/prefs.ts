@@ -13,7 +13,7 @@ export interface SeqPrefs {
 
 const PREFS_PATH = join(homedir(), ".seq-mcp-prefs.json");
 
-const DEFAULTS: SeqPrefs = {
+export const DEFAULTS: SeqPrefs = {
   hideFields: ["ProcessId", "ThreadId", "EventId"],
   defaultFormat: "compact",
   maxMessageLength: 120,
