@@ -74,7 +74,7 @@ Status: ✅ Tested | ⚠️ Partial | ❌ Not tested
 
 | Tool | Test | Status | Notes |
 |------|------|--------|-------|
-| `seq_fields` | Discover fields for a system | ✅ | `System = 'MediaFilesMigration'` — found 18 fields with sample values |
+| `seq_fields` | Discover fields for a system | ✅ | `System = 'MyApp'` — found 18 fields with sample values |
 | `seq_fields` | sampleSize param | ✅ | sampleSize=10 works, returns correct sample count |
 | `seq_fields` | Cache key includes sampleSize | ✅ | sampleSize=5 (33 fields) vs sampleSize=20 (45 fields) → separate cache entries. v1.1.1 fix verified. |
 | `seq_fields` | Caching | ✅ | Same filter returns cached result within 10 min TTL |
@@ -101,15 +101,15 @@ Status: ✅ Tested | ⚠️ Partial | ❌ Not tested
 | Tool | Test | Status | Notes |
 |------|------|--------|-------|
 | `seq_history` | Show empty cache | ✅ | Returns "(none yet)" for both sections |
-| `seq_history` | Show after seq_search calls | ✅ | AramisMarketplace + CardoenExportAramis properties populated |
-| `seq_history` | File scoped per SEQ_SERVER_URL hostname | ✅ | `~/.seq-mcp-history-seq.datosonline.be.json` |
+| `seq_history` | Show after seq_search calls | ✅ | MyApp + ExampleExport properties populated |
+| `seq_history` | File scoped per SEQ_SERVER_URL hostname | ✅ | `~/.seq-mcp-history-seq.example.com.json` |
 | `seq_history_clear` | Clear all | ✅ | Both queries and systems emptied |
 | `seq_history_clear` | Clear queries only | ✅ | Systems retained, queries gone |
 | `seq_history_clear` | Clear systems only | ✅ | Queries retained, systems gone |
-| `seq_history_clear` | Clear specific system | ✅ | AramisMarketplace removed, others retained |
+| `seq_history_clear` | Clear specific system | ✅ | MyApp removed, others retained |
 | `seq_history_clear` | Clear queries_older_than | ✅ | 0 removed (all recent) — correct |
 | `seq_history_clear` | Unknown system | ✅ | Returns "System not found: NonExistent" |
-| `seq_history` | filter param (matching) | ✅ | `filter=Datos` → DatosServicesLegacy only + matching queries |
+| `seq_history` | filter param (matching) | ✅ | `filter=Example` → ExampleExport only + matching queries |
 | `seq_history` | filter param (no match) | ✅ | No filter → all systems + all queries |
 | `seq_history` | maxHistoryQueries cap (via prefs) | ✅ | Set to 10 via seq_prefs_update, applied on next recordQuery |
 
