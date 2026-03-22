@@ -135,7 +135,8 @@ Status: ✅ Tested | ⚠️ Partial | ❌ Not tested
 | `formatter.ts` | all 4 formats, empty array, truncation, exception, Properties formats, tokens | ✅ | 16 tests, prefs mocked |
 | `history.ts` | prune, recordQuery, dedup, cap, clearHistory, Properties formats | ✅ | 11 tests, fs+prefs mocked |
 | `client.ts` | discoverFields normalization, cache key, API key header, error handling, count=0 early return | ✅ | 12 tests, fetch mocked |
-| **Total** | **57 tests** | ✅ | `npm test` — vitest, zero API calls |
+| `tools.test.ts` | Zod validation, count capping (search 200, recent 200, stream 100), format defaulting, prefs error handling, history clear dispatch | ✅ | 11 tests, MockMcpServer + mock client |
+| **Total** | **68 tests** | ✅ | `npm test` — vitest, zero API calls |
 
 ## Lint
 

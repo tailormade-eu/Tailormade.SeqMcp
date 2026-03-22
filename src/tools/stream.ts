@@ -16,7 +16,7 @@ export function registerStreamTools(server: McpServer, client: SeqClient): void 
     {
       filter: z.string().optional().describe("Seq filter expression. For text search: @Message like '%keyword%'. For structured: @Level = 'Error'. Combine with and/or."),
       signal: z.string().optional().describe("Signal ID to filter by. Use seq_signals to discover available IDs."),
-      count: z.coerce.number().min(1).optional().describe("Max events to return (default 10)"),
+      count: z.coerce.number().min(1).optional().describe("Max events to return (default 10, max 100)"),
       wait: z.coerce.number().optional().describe("Max milliseconds to wait for new events (default 5000, max 10000)"),
       format: z.enum(["compact", "table", "detail", "raw"]).optional()
         .describe("Output format: compact (default), table, detail, or raw (full JSON)"),
@@ -26,7 +26,7 @@ export function registerStreamTools(server: McpServer, client: SeqClient): void 
       const events = await client.scan({
         filter: params.filter,
         signal: params.signal,
-        count: params.count ?? 10,
+        count: Math.min(params.count ?? 10, 100),
         afterId: undefined,
         wait,
       });
