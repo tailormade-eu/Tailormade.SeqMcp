@@ -13,7 +13,16 @@ export function registerPrefsTools(server: McpServer): void {
     {},
     async () => {
       const prefs = loadPrefs();
-      return respond(JSON.stringify(prefs, null, 2));
+      const lines = [
+        "Current preferences (valid values shown):",
+        `  defaultFormat: compact | table | detail | raw  [current: ${prefs.defaultFormat}]`,
+        `  maxMessageLength: positive integer  [current: ${prefs.maxMessageLength}]`,
+        `  hideFields: comma-separated field names  [current: ${prefs.hideFields.join(", ")}]`,
+        `  historyQueryKeepDays: positive integer  [current: ${prefs.historyQueryKeepDays}]`,
+        `  historySystemKeepDays: positive integer  [current: ${prefs.historySystemKeepDays}]`,
+        `  maxHistoryQueries: positive integer  [current: ${prefs.maxHistoryQueries}]`,
+      ];
+      return respond(lines.join("\n"));
     }
   );
 

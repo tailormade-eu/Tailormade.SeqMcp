@@ -12,7 +12,7 @@ function respond(text: string) {
 export function registerStreamTools(server: McpServer, client: SeqClient): void {
   server.tool(
     "seq_stream",
-    "Wait for new events from Seq using long-polling. Blocks up to `wait` ms for new events. Ideal for real-time monitoring.\n\nllmTip: Pass afterId from a previous seq_recent or seq_stream call to only get NEW events. Without afterId, returns most recent events. Default wait 5000ms, max 10000ms. Use `filter` for text search (`@Message like '%keyword%'`) or structured filters (`@Level = 'Error'`).",
+    "Wait for new events from Seq using long-polling. Blocks up to `wait` ms for new events. Ideal for real-time monitoring.\n\nllmTip: Pass afterId from a previous seq_recent or seq_stream call to only get NEW events. Without afterId, returns most recent events. Default wait 5000ms, max 10000ms. Use `filter` for text search (`@Message like '%keyword%'`) or structured filters (`@Level = 'Error'`).\n\nWARNING: afterId on /api/events/scan scans BACKWARDS from that event ID, not forward. Do not use afterId in seq_stream for forward polling — use seq_recent instead.",
     {
       filter: z.string().optional().describe("Seq filter expression. For text search: @Message like '%keyword%'. For structured: @Level = 'Error'. Combine with and/or."),
       signal: z.string().optional().describe("Signal ID to filter by. Use seq_signals to discover available IDs."),

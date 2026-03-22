@@ -37,11 +37,12 @@ export class SeqClient {
 
   private async request<T>(path: string, params: Record<string, string> = {}): Promise<T> {
     const url = new URL(path, this.baseUrl);
-    url.searchParams.set("apiKey", this.apiKey);
     for (const [k, v] of Object.entries(params)) {
       if (v !== undefined && v !== "") url.searchParams.set(k, v);
     }
-    const res = await fetch(url.toString());
+    const res = await fetch(url.toString(), {
+      headers: { "X-Seq-ApiKey": this.apiKey },
+    });
     if (!res.ok) {
       const body = await res.text();
       throw new Error(`Seq API ${res.status}: ${body}`);
@@ -51,13 +52,12 @@ export class SeqClient {
 
   private async post<T>(path: string, params: Record<string, string> = {}, body?: unknown): Promise<T> {
     const url = new URL(path, this.baseUrl);
-    url.searchParams.set("apiKey", this.apiKey);
     for (const [k, v] of Object.entries(params)) {
       if (v !== undefined && v !== "") url.searchParams.set(k, v);
     }
     const res = await fetch(url.toString(), {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "X-Seq-ApiKey": this.apiKey, "Content-Type": "application/json" },
       body: body ? JSON.stringify(body) : undefined,
     });
     if (!res.ok) {
@@ -73,11 +73,12 @@ export class SeqClient {
 
   private async requestNdjson(path: string, params: Record<string, string> = {}): Promise<unknown[]> {
     const url = new URL(path, this.baseUrl);
-    url.searchParams.set("apiKey", this.apiKey);
     for (const [k, v] of Object.entries(params)) {
       if (v !== undefined && v !== "") url.searchParams.set(k, v);
     }
-    const res = await fetch(url.toString());
+    const res = await fetch(url.toString(), {
+      headers: { "X-Seq-ApiKey": this.apiKey },
+    });
     if (!res.ok) {
       const body = await res.text();
       throw new Error(`Seq API ${res.status}: ${body}`);
@@ -174,7 +175,7 @@ export class SeqClient {
 
   async discoverFields(filter: string, sampleSize = 20): Promise<{ fields: Record<string, Set<string>>; sampleCount: number }> {
     const now = Date.now();
-    const cacheKey = filter;
+    const cacheKey = `${filter}:${sampleSize}`;
     const cached = this.fieldValuesCache.get(cacheKey);
     if (cached && now - cached.fetchedAt < this.CACHE_TTL) return cached.data;
 

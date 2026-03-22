@@ -44,6 +44,10 @@ export function updatePref(key: string, value: unknown): SeqPrefs {
   const prefs = loadPrefs();
   if (!(key in DEFAULTS)) throw new Error(`Unknown preference: ${key}`);
   const defaultValue = (DEFAULTS as unknown as Record<string, unknown>)[key];
+  if (key === "defaultFormat") {
+    const valid = ["compact", "table", "detail", "raw"];
+    if (!valid.includes(value as string)) throw new Error(`Invalid value for defaultFormat: must be one of ${valid.join(", ")} (got: ${value})`);
+  }
   if (typeof defaultValue === "number") {
     const n = Number(value);
     if (!Number.isInteger(n) || n < 1) throw new Error(`Invalid value for ${key}: must be a positive integer (got: ${value})`);

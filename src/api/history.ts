@@ -9,6 +9,7 @@ function historyPath(): string {
     const host = new URL(url).hostname.replace(/[^a-z0-9.-]/gi, "_");
     return join(homedir(), `.seq-mcp-history-${host}.json`);
   } catch {
+    console.error("seq-mcp: invalid SEQ_SERVER_URL, falling back to default history path");
     return join(homedir(), ".seq-mcp-history.json");
   }
 }

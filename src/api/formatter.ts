@@ -195,6 +195,8 @@ export function formatEvents(events: unknown[], mode: FormatMode): string {
     case "detail":
       if (typed.length === 1) return formatDetail(typed[0]);
       return typed.map((e) => formatDetail(e)).join("\n\n---\n\n");
+    default:
+      throw new Error(`Unknown format mode: ${mode}`);
   }
 }
 
