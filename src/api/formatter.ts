@@ -145,9 +145,7 @@ function formatTable(events: SeqEvent[], maxLen: number): string {
   return [hdr, sep, ...body].join("\n");
 }
 
-function formatDetail(event: SeqEvent): string {
-  const prefs = loadPrefs();
-  const hide = new Set(prefs.hideFields);
+function formatDetail(event: SeqEvent, hide: Set<string>): string {
   const lines: string[] = [];
 
   lines.push(`Event: ${event.Id ?? "unknown"}`);
@@ -192,9 +190,11 @@ export function formatEvents(events: unknown[], mode: FormatMode): string {
       return formatCompact(typed, maxLen);
     case "table":
       return formatTable(typed, maxLen);
-    case "detail":
-      if (typed.length === 1) return formatDetail(typed[0]);
-      return typed.map((e) => formatDetail(e)).join("\n\n---\n\n");
+    case "detail": {
+      const hide = new Set(prefs.hideFields);
+      if (typed.length === 1) return formatDetail(typed[0], hide);
+      return typed.map((e) => formatDetail(e, hide)).join("\n\n---\n\n");
+    }
     default:
       throw new Error(`Unknown format mode: ${mode}`);
   }
