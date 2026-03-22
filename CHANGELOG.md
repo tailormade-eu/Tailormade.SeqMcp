@@ -1,5 +1,31 @@
 # Changelog
 
+## [1.1.4] - 2026-03-22
+
+### Added
+- 11 tool handler integration tests (MockMcpServer pattern): Zod validation, count capping, format defaulting, prefs error handling, history clear dispatch
+- `clearHistory()` no-prune-side-effect fix: `saveRaw()` for direct writes without pruning unrelated sections
+- `_fetchEvents()` shared private method in SeqClient — deduplicates `search()` and `recent()` endpoint calls
+- `respond()` shared helper in `src/tools/utils.ts` — replaces identical function in 7 tool files
+- `"undefined"` string guard on all HTTP methods — prevents literal `"undefined"` from reaching Seq API
+- `fieldValuesCache` size cap at 50 entries — prevents unbounded memory growth
+- `Array.isArray()` validation on `/api/events` responses — clear error instead of cryptic crash
+
+### Fixed
+- `loadPrefs()` returned mutable reference to cache on fresh-load path — now returns defensive copy on both cached and fresh paths
+- `DEFAULTS.hideFields` array shared by reference — now deep-copied in all `loadPrefs()` code paths
+- `getEvent()` eventId path interpolation — now uses `encodeURIComponent()` to prevent path injection
+- `clearHistory("queries")` was pruning old systems as side-effect — uses `saveRaw()` now
+- `recent.ts` + `stream.ts` count cap added (200 and 100 respectively) — was uncapped
+- `tools/prefs.ts` unknown key now returns error message instead of throwing
+- `historyPath()` lazy evaluation — removed module-level constant, path resolved fresh on every call
+- `seq_get_event` now passes prefs to `formatEvents()` (consistent with other tools)
+- `formatCompact` variable names `first`/`last` renamed to `oldest`/`newest` for clarity
+- NDJSON whitespace-only lines filtered before `JSON.parse` attempt
+- `rangeStartUtc` describe() removed false "Default: last 24h" claim
+
+---
+
 ## [1.1.3] - 2026-03-22
 
 ### Added

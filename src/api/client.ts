@@ -125,7 +125,7 @@ export class SeqClient {
   }
 
   async getEvent(eventId: string): Promise<unknown> {
-    return this.request<unknown>(`/api/events/${eventId}`, { render: "true" });
+    return this.request<unknown>(`/api/events/${encodeURIComponent(eventId)}`, { render: "true" });
   }
 
   async listSignals(): Promise<unknown[]> {

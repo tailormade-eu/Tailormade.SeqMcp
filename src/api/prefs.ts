@@ -37,19 +37,19 @@ export function loadPrefs(): SeqPrefs {
 
   let result: SeqPrefs;
   if (!existsSync(PREFS_PATH)) {
-    result = { ...DEFAULTS };
+    result = { ...DEFAULTS, hideFields: [...DEFAULTS.hideFields] };
   } else {
     try {
       const raw = JSON.parse(readFileSync(PREFS_PATH, "utf-8"));
-      result = { ...DEFAULTS, ...raw };
+      result = { ...DEFAULTS, ...raw, hideFields: Array.isArray(raw.hideFields) ? [...raw.hideFields] : [...DEFAULTS.hideFields] };
     } catch {
-      result = { ...DEFAULTS };
+      result = { ...DEFAULTS, hideFields: [...DEFAULTS.hideFields] };
     }
   }
 
   cachedPrefs = result;
   cacheTime = now;
-  return result;
+  return { ...result, hideFields: [...result.hideFields] };
 }
 
 export function savePrefs(prefs: SeqPrefs): void {

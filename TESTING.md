@@ -135,9 +135,9 @@ Status: ✅ Tested | ⚠️ Partial | ❌ Not tested
 | `prefs.ts` | loadPrefs defaults, merge, corrupt JSON, cache+TTL; updatePref valid/invalid | ✅ | 11 tests, fs mocked, clearPrefsCache in beforeEach |
 | `formatter.ts` | all 4 formats, empty array, truncation, exception, Properties formats, tokens | ✅ | 16 tests, prefs mocked |
 | `history.ts` | prune, recordQuery, dedup, cap, clearHistory (no prune side-effect), Properties formats | ✅ | 13 tests, fs+prefs mocked |
-| `client.ts` | discoverFields normalization, cache key, API key header, error handling, count=0 early return | ✅ | 12 tests, fetch mocked |
+| `client.ts` | discoverFields normalization, cache key, API key header, error handling, count=0 early return, undefined guard, cache key trim | ✅ | 16 tests, fetch mocked |
 | `tools.test.ts` | Zod validation, count capping (search 200, recent 200, stream 100), format defaulting, prefs error handling, history clear dispatch | ✅ | 11 tests, MockMcpServer + mock client |
-| **Total** | **69 tests** | ✅ | `npm test` — vitest, zero API calls |
+| **Total** | **73 tests** | ✅ | `npm test` — vitest, zero API calls |
 
 ## Lint
 

@@ -22,6 +22,7 @@ src/tools/stream.ts     → registerStreamTools    (seq_stream)
 src/tools/query.ts      → registerQueryTools     (seq_query, seq_query_help, seq_expression_indexes, seq_fields)
 src/tools/prefs.ts      → registerPrefsTools     (seq_prefs, seq_prefs_update)
 src/tools/history.ts    → registerHistoryTools   (seq_history, seq_history_clear)
+src/tools/utils.ts      → respond() shared helper used by all tool files
 ```
 
 ### API Layer
@@ -133,7 +134,7 @@ npm run build
 
 ### Test
 ```bash
-npm test          # vitest run (57 unit tests)
+npm test          # vitest run (73 unit tests)
 npm run lint      # eslint + tsc --noEmit
 ```
 
