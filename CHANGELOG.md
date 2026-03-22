@@ -1,5 +1,26 @@
 # Changelog
 
+## [1.1.1] - 2026-03-22
+
+### Added
+- ESLint with TypeScript ESLint recommended rules (no-unused-vars, no-explicit-any)
+- seq_query_help tool — inline filter + SQL reference docs
+- History tools: seq_history, seq_history_clear with filter, retention, per-server scoping
+
+### Fixed
+- API key moved from URL query param to X-Seq-ApiKey header (security)
+- defaultFormat pref validated against allowed values before save
+- formatEvents switch gets default case (no silent undefined on corrupt prefs)
+- historyPath() catch block logs to console.error instead of silent swallow
+- seq_fields cache key includes sampleSize (prevents stale cache hits)
+- seq_search count param now enforced server-side (max 200 cap)
+- Client name removed from tool parameter examples (guidelines compliance)
+- seq_stream llmTip updated with afterId backward-scan warning
+- seq_prefs output shows valid values per key
+- recordQuery sort robustness improved
+
+---
+
 ## [1.0.0] - 2026-03-19
 
 ### Added

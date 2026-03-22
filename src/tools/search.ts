@@ -28,7 +28,7 @@ export function registerSearchTools(server: McpServer, client: SeqClient): void 
       const events = await client.search({
         filter: params.filter,
         signal: params.signal,
-        count: params.count ?? 20,
+        count: Math.min(params.count ?? 20, 200),
         startedAt: params.startedAt,
         endedAt: params.endedAt,
       });

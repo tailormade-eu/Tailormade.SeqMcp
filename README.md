@@ -60,8 +60,11 @@ Minimum required: **Read**.
 | `seq_query` | Execute SQL queries (`select ... from stream`) | table |
 | `seq_expression_indexes` | List expression indexes | table |
 | `seq_fields` | Discover fields by sampling events (cached 10 min) | - |
+| `seq_query_help` | Inline filter + SQL reference docs | - |
 | `seq_prefs` | Show current preferences | - |
 | `seq_prefs_update` | Update a preference | - |
+| `seq_history` | Show cached query history and discovered systems | - |
+| `seq_history_clear` | Clear history cache (all, queries, systems, or specific) | - |
 
 ## Output Formats
 
@@ -78,6 +81,9 @@ Stored in `~/.seq-mcp-prefs.json`:
 | `defaultFormat` | `compact` | Default output format for event tools |
 | `maxMessageLength` | `120` | Truncate messages in compact/table mode |
 | `hideFields` | `ProcessId,ThreadId,EventId` | Fields hidden in detail view |
+| `historyQueryKeepDays` | `60` | Auto-prune query history older than N days |
+| `historySystemKeepDays` | `60` | Auto-prune system entries older than N days |
+| `maxHistoryQueries` | `500` | Max query entries to keep in history |
 
 ## Architecture
 
@@ -87,14 +93,16 @@ src/
 ├── api/
 │   ├── client.ts         SeqClient — HTTP calls + caching
 │   ├── formatter.ts      Event/signal formatting (compact/table/detail/raw)
-│   └── prefs.ts          Preferences (~/.seq-mcp-prefs.json)
+│   ├── prefs.ts          Preferences (~/.seq-mcp-prefs.json)
+│   └── history.ts        History cache (~/.seq-mcp-history-{hostname}.json)
 └── tools/
     ├── search.ts          seq_search, seq_get_event
     ├── signals.ts         seq_signals
     ├── recent.ts          seq_recent
     ├── stream.ts          seq_stream
-    ├── query.ts           seq_query, seq_expression_indexes, seq_fields
-    └── prefs.ts           seq_prefs, seq_prefs_update
+    ├── query.ts           seq_query, seq_query_help, seq_expression_indexes, seq_fields
+    ├── prefs.ts           seq_prefs, seq_prefs_update
+    └── history.ts         seq_history, seq_history_clear
 ```
 
 ## References

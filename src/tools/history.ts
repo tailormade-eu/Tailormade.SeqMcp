@@ -62,7 +62,7 @@ export function registerHistoryTools(server: McpServer): void {
     "Clear the local Seq history cache.\n\nllmTip: NOTE: 'all'/'queries'/'systems' need no extra params. NOTE: use 'system' + system param to remove one specific system (e.g. after a client offboards). NOTE: use 'queries_older_than' + days param for a manual retention sweep outside the auto-prune cycle.",
     {
       what: z.enum(["all", "queries", "systems", "system", "queries_older_than"]).describe("'all' = everything | 'queries' = query history only | 'systems' = all discovered systems/properties | 'system' = one system by name (requires system param) | 'queries_older_than' = queries older than N days (requires days param)"),
-      system: z.string().optional().describe("System name to remove. Only used when what='system'. e.g. 'AramisMarketplace'"),
+      system: z.string().optional().describe("System name to remove. Only used when what='system'. e.g. 'MyApp'"),
       days: z.coerce.number().min(1).optional().describe("Number of days threshold. Only used when what='queries_older_than'. e.g. 30"),
     },
     async (params) => {
