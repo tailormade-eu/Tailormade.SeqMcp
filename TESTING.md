@@ -103,6 +103,7 @@ Status: ✅ Tested | ⚠️ Partial | ❌ Not tested
 | `seq_history` | Show empty cache | ✅ | Returns "(none yet)" for both sections |
 | `seq_history` | Show after seq_search calls | ✅ | MyApp + ExampleExport properties populated |
 | `seq_history` | File scoped per SEQ_SERVER_URL hostname | ✅ | `~/.seq-mcp-history-seq.example.com.json` |
+| `seq_history` | historyPath() lazy evaluation | ✅ | No module-level constant — path resolved on each read/write from `process.env.SEQ_SERVER_URL` |
 | `seq_history_clear` | Clear all | ✅ | Both queries and systems emptied |
 | `seq_history_clear` | Clear queries only | ✅ | Systems retained, queries gone |
 | `seq_history_clear` | Clear systems only | ✅ | Queries retained, systems gone |

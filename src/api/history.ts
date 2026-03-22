@@ -14,8 +14,6 @@ function historyPath(): string {
   }
 }
 
-const HISTORY_PATH = historyPath();
-
 export interface QueryEntry {
   filter?: string;
   startedAt?: string;
@@ -35,9 +33,10 @@ export interface SeqHistory {
 }
 
 function load(): SeqHistory {
-  if (!existsSync(HISTORY_PATH)) return { queries: [], systems: {} };
+  const path = historyPath();
+  if (!existsSync(path)) return { queries: [], systems: {} };
   try {
-    return JSON.parse(readFileSync(HISTORY_PATH, "utf-8"));
+    return JSON.parse(readFileSync(path, "utf-8"));
   } catch {
     return { queries: [], systems: {} };
   }
@@ -57,7 +56,7 @@ function prune(h: SeqHistory, prefs: SeqPrefs): void {
 
 function saveRaw(h: SeqHistory): void {
   try {
-    writeFileSync(HISTORY_PATH, JSON.stringify(h, null, 2), "utf-8");
+    writeFileSync(historyPath(), JSON.stringify(h, null, 2), "utf-8");
   } catch (e) {
     console.error("seq-mcp: failed to write history file:", e);
   }
@@ -93,7 +92,7 @@ export function clearQueriesOlderThan(days: number): number {
 }
 
 export function historyFile(): string {
-  return HISTORY_PATH;
+  return historyPath();
 }
 
 export function loadHistory(): SeqHistory {
