@@ -32,8 +32,9 @@ export function registerStreamTools(server: McpServer, client: SeqClient): void 
       });
       if (events.length === 0) return respond("No new events within the wait period.");
       recordQuery({ filter: params.filter }, events);
-      const mode: FormatMode = params.format ?? loadPrefs().defaultFormat;
-      return respond(formatEvents(events, mode));
+      const prefs = loadPrefs();
+      const mode: FormatMode = params.format ?? prefs.defaultFormat;
+      return respond(formatEvents(events, mode, prefs));
     }
   );
 }

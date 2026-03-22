@@ -1,4 +1,4 @@
-import { loadPrefs } from "./prefs.js";
+import { loadPrefs, SeqPrefs } from "./prefs.js";
 
 export type FormatMode = "compact" | "table" | "detail" | "raw";
 
@@ -178,9 +178,9 @@ function formatDetail(event: SeqEvent, hide: Set<string>): string {
   return lines.join("\n");
 }
 
-export function formatEvents(events: unknown[], mode: FormatMode): string {
-  const prefs = loadPrefs();
-  const maxLen = mode === "detail" ? 0 : prefs.maxMessageLength;
+export function formatEvents(events: unknown[], mode: FormatMode, prefs?: SeqPrefs): string {
+  const p = prefs ?? loadPrefs();
+  const maxLen = mode === "detail" ? 0 : p.maxMessageLength;
   const typed = events as SeqEvent[];
 
   switch (mode) {
@@ -191,7 +191,7 @@ export function formatEvents(events: unknown[], mode: FormatMode): string {
     case "table":
       return formatTable(typed, maxLen);
     case "detail": {
-      const hide = new Set(prefs.hideFields);
+      const hide = new Set(p.hideFields);
       if (typed.length === 1) return formatDetail(typed[0], hide);
       return typed.map((e) => formatDetail(e, hide)).join("\n\n---\n\n");
     }

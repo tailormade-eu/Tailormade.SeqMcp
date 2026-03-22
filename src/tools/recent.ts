@@ -29,8 +29,9 @@ export function registerRecentTools(server: McpServer, client: SeqClient): void 
         afterId: params.afterId,
       });
       recordQuery({ filter: params.filter }, events);
-      const mode: FormatMode = params.format ?? loadPrefs().defaultFormat;
-      return respond(formatEvents(events, mode));
+      const prefs = loadPrefs();
+      const mode: FormatMode = params.format ?? prefs.defaultFormat;
+      return respond(formatEvents(events, mode, prefs));
     }
   );
 }

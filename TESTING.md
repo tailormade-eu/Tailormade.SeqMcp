@@ -131,7 +131,7 @@ Status: ✅ Tested | ⚠️ Partial | ❌ Not tested
 
 | Module | Tests | Status | Notes |
 |--------|-------|--------|-------|
-| `prefs.ts` | loadPrefs defaults, merge, corrupt JSON; updatePref valid/invalid | ✅ | 11 tests, fs mocked |
+| `prefs.ts` | loadPrefs defaults, merge, corrupt JSON, cache+TTL; updatePref valid/invalid | ✅ | 11 tests, fs mocked, clearPrefsCache in beforeEach |
 | `formatter.ts` | all 4 formats, empty array, truncation, exception, Properties formats, tokens | ✅ | 16 tests, prefs mocked |
 | `history.ts` | prune, recordQuery, dedup, cap, clearHistory, Properties formats | ✅ | 11 tests, fs+prefs mocked |
 | `client.ts` | discoverFields normalization, cache key, API key header, error handling, count=0 early return | ✅ | 12 tests, fetch mocked |

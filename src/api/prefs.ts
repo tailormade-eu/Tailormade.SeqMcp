@@ -22,19 +22,40 @@ export const DEFAULTS: SeqPrefs = {
   maxHistoryQueries: 500,
 };
 
+let cachedPrefs: SeqPrefs | null = null;
+let cacheTime = 0;
+const CACHE_TTL_MS = 60_000;
+
+export function clearPrefsCache(): void {
+  cachedPrefs = null;
+  cacheTime = 0;
+}
+
 export function loadPrefs(): SeqPrefs {
-  if (!existsSync(PREFS_PATH)) return { ...DEFAULTS };
-  try {
-    const raw = JSON.parse(readFileSync(PREFS_PATH, "utf-8"));
-    return { ...DEFAULTS, ...raw };
-  } catch {
-    return { ...DEFAULTS };
+  const now = Date.now();
+  if (cachedPrefs && now - cacheTime < CACHE_TTL_MS) return cachedPrefs;
+
+  let result: SeqPrefs;
+  if (!existsSync(PREFS_PATH)) {
+    result = { ...DEFAULTS };
+  } else {
+    try {
+      const raw = JSON.parse(readFileSync(PREFS_PATH, "utf-8"));
+      result = { ...DEFAULTS, ...raw };
+    } catch {
+      result = { ...DEFAULTS };
+    }
   }
+
+  cachedPrefs = result;
+  cacheTime = now;
+  return result;
 }
 
 export function savePrefs(prefs: SeqPrefs): void {
   try {
     writeFileSync(PREFS_PATH, JSON.stringify(prefs, null, 2), "utf-8");
+    clearPrefsCache();
   } catch (e) {
     console.error("seq-mcp: failed to write prefs file:", e);
   }

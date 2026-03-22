@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { loadPrefs, updatePref, DEFAULTS } from "./prefs.js";
+import { loadPrefs, updatePref, DEFAULTS, clearPrefsCache } from "./prefs.js";
 
 vi.mock("fs", () => ({
   existsSync: vi.fn(() => false),
@@ -10,6 +10,7 @@ vi.mock("fs", () => ({
 import { existsSync, readFileSync, writeFileSync } from "fs";
 
 beforeEach(() => {
+  clearPrefsCache();
   vi.mocked(existsSync).mockReturnValue(false);
   vi.mocked(writeFileSync).mockImplementation(() => {});
 });

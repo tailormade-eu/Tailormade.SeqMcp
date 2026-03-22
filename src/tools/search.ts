@@ -33,8 +33,9 @@ export function registerSearchTools(server: McpServer, client: SeqClient): void 
         endedAt: params.endedAt,
       });
       recordQuery({ filter: params.filter, startedAt: params.startedAt, endedAt: params.endedAt }, events);
-      const mode: FormatMode = params.format ?? loadPrefs().defaultFormat;
-      return respond(formatEvents(events, mode));
+      const prefs = loadPrefs();
+      const mode: FormatMode = params.format ?? prefs.defaultFormat;
+      return respond(formatEvents(events, mode, prefs));
     }
   );
 

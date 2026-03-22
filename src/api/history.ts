@@ -1,7 +1,7 @@
 import { readFileSync, writeFileSync, existsSync } from "fs";
 import { homedir } from "os";
 import { join } from "path";
-import { loadPrefs } from "./prefs.js";
+import { loadPrefs, SeqPrefs } from "./prefs.js";
 
 function historyPath(): string {
   const url = process.env.SEQ_SERVER_URL ?? "";
@@ -43,8 +43,7 @@ function load(): SeqHistory {
   }
 }
 
-function prune(h: SeqHistory): void {
-  const prefs = loadPrefs();
+function prune(h: SeqHistory, prefs: SeqPrefs): void {
   const ms = (days: number) => Date.now() - days * 24 * 60 * 60 * 1000;
 
   const systemCutoff = ms(prefs.historySystemKeepDays);
@@ -56,8 +55,8 @@ function prune(h: SeqHistory): void {
   h.queries = h.queries.filter((q) => new Date(q.usedAt).getTime() >= queryCutoff);
 }
 
-function save(h: SeqHistory): void {
-  prune(h);
+function save(h: SeqHistory, prefs?: SeqPrefs): void {
+  prune(h, prefs ?? loadPrefs());
   try {
     writeFileSync(HISTORY_PATH, JSON.stringify(h, null, 2), "utf-8");
   } catch (e) {
@@ -102,6 +101,7 @@ export function recordQuery(
   events: unknown[]
 ): void {
   const h = load();
+  const prefs = loadPrefs();
 
   // Extract systems and their properties from results
   const seenSystems = new Set<string>();
@@ -139,8 +139,8 @@ export function recordQuery(
   );
   if (!isDuplicate) {
     h.queries.unshift(entry);
-    h.queries = h.queries.slice(0, loadPrefs().maxHistoryQueries);
+    h.queries = h.queries.slice(0, prefs.maxHistoryQueries);
   }
 
-  save(h);
+  save(h, prefs);
 }
