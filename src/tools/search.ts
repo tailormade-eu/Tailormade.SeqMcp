@@ -19,7 +19,7 @@ export function registerSearchTools(server: McpServer, client: SeqClient): void 
     {
       filter: z.string().optional().describe("Seq filter expression. For text search: @Message like '%keyword%'. For structured: Environment = 'Production', @Level = 'Error'. Combine with and/or."),
       signal: z.string().optional().describe("Signal ID to filter by. Use seq_signals to discover available IDs."),
-      count: z.coerce.number().optional().describe("Max events to return (default 20, max 200)"),
+      count: z.coerce.number().min(1).optional().describe("Max events to return (default 20, max 200)"),
       startedAt: z.string().optional().describe("Only events after this timestamp. ISO8601 format, e.g. 2026-03-18T00:00:00Z"),
       endedAt: z.string().optional().describe("Only events before this timestamp. ISO8601 format, e.g. 2026-03-19T00:00:00Z"),
       format: formatParam,

@@ -138,6 +138,26 @@ describe("error handling", () => {
   });
 });
 
+describe("count=0 early return", () => {
+  it("search with count=0 returns empty array without calling fetch", async () => {
+    const result = await client.search({ count: 0 });
+    expect(result).toEqual([]);
+    expect(mockFetch).not.toHaveBeenCalled();
+  });
+
+  it("recent with count=0 returns empty array without calling fetch", async () => {
+    const result = await client.recent({ count: 0 });
+    expect(result).toEqual([]);
+    expect(mockFetch).not.toHaveBeenCalled();
+  });
+
+  it("scan with count=0 returns empty array without calling fetch", async () => {
+    const result = await client.scan({ count: 0 });
+    expect(result).toEqual([]);
+    expect(mockFetch).not.toHaveBeenCalled();
+  });
+});
+
 describe("scan (NDJSON)", () => {
   it("parses valid NDJSON lines", async () => {
     mockFetch.mockResolvedValueOnce(ndjsonResponse([

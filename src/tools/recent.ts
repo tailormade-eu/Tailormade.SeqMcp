@@ -16,7 +16,7 @@ export function registerRecentTools(server: McpServer, client: SeqClient): void 
     {
       filter: z.string().optional().describe("Seq filter expression. For text search: @Message like '%keyword%'. For structured: @Level = 'Error'. Combine with and/or."),
       signal: z.string().optional().describe("Signal ID to filter by. Use seq_signals to discover available IDs."),
-      count: z.coerce.number().optional().describe("Max events to return (default 10)"),
+      count: z.coerce.number().min(1).optional().describe("Max events to return (default 10)"),
       afterId: z.string().optional().describe("Only return events newer than this event ID. Use for polling: pass the Id of the last event from your previous call."),
       format: z.enum(["compact", "table", "detail", "raw"]).optional()
         .describe("Output format: compact (default), table, detail, or raw (full JSON)"),

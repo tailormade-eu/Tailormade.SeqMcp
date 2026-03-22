@@ -104,6 +104,7 @@ export class SeqClient {
     startedAt?: string;
     endedAt?: string;
   }): Promise<unknown[]> {
+    if (opts.count === 0) return [];
     const params: Record<string, string> = {};
     if (opts.filter) params.filter = opts.filter;
     if (opts.signal) params.signal = opts.signal;
@@ -133,6 +134,7 @@ export class SeqClient {
     count?: number;
     afterId?: string;
   }): Promise<unknown[]> {
+    if (opts.count === 0) return [];
     const params: Record<string, string> = {};
     if (opts.filter) params.filter = opts.filter;
     if (opts.signal) params.signal = opts.signal;
@@ -148,6 +150,7 @@ export class SeqClient {
     afterId?: string;
     wait?: number;
   }): Promise<unknown[]> {
+    if (opts.count === 0) return [];
     const params: Record<string, string> = {};
     if (opts.filter) params.filter = opts.filter;
     if (opts.signal) params.signal = opts.signal;
