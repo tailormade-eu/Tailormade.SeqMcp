@@ -92,7 +92,7 @@ Status: ✅ Tested | ⚠️ Partial | ❌ Not tested
 | `seq_prefs_update` | Invalid key | ✅ | Returns "Unknown preference: invalidKey" |
 | `seq_prefs_update` | Non-numeric value for numeric key | ✅ | `historyQueryKeepDays = "banana"` → "must be a number" |
 | `seq_prefs_update` | Negative value for keepDays | ✅ | `historyQueryKeepDays = -5` → "must be a positive integer (got: -5)" |
-| `seq_prefs_update` | Float value for integer key | ❌ | `maxHistoryQueries = 0.5` → "must be a positive integer" |
+| `seq_prefs_update` | Float value for integer key | ✅ | `maxHistoryQueries = 0.5` → "must be a positive integer (got: 0.5)" |
 
 ## History
 
