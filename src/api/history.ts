@@ -138,6 +138,7 @@ export function recordQuery(
   );
   if (!isDuplicate) {
     h.queries.unshift(entry);
+    h.queries.sort((a, b) => b.usedAt.localeCompare(a.usedAt));
     h.queries = h.queries.slice(0, loadPrefs().maxHistoryQueries);
   }
 
