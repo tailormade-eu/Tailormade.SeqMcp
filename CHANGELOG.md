@@ -1,5 +1,26 @@
 # Changelog
 
+## [1.1.3] - 2026-03-22
+
+### Added
+- 10 additional unit tests (47 → 57): NDJSON parsing, date-based prune, count=0 guards, unknown format throw
+- Module-level prefs cache with 60s TTL — max 1 disk read per minute
+- `clearPrefsCache()` export for test isolation
+- `validatePositiveInt()` helper for numeric pref validation
+
+### Fixed
+- `count=0` silent behavioral difference — Zod `.min(1)` validation + defense-in-depth early return
+- `updatePref()` fragile if/else chain → exhaustive switch/case with `never` guard
+- `loadPrefs()` called 2× per `recordQuery()` — prefs now loaded once and passed through
+- `formatEvents()` accepts optional `prefs` param — callers load prefs once instead of twice
+- `loadPrefs()` cache returned mutable reference — now returns shallow copy
+- Test env: `SEQ_SERVER_URL` set in vitest setup to prevent stderr spam
+- `DEFAULTS` exported from prefs.ts — test no longer maintains local copy
+- `emptyResponse()` test helper for HTTP 204 (no body parsing)
+- `toBeLessThanOrEqual(3)` → `toBe(3)` for exact off-by-one detection
+
+---
+
 ## [1.1.2] - 2026-03-22
 
 ### Added

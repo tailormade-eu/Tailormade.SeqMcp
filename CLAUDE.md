@@ -63,7 +63,7 @@ Handles Seq Properties in both formats: flat object `{Key: Value}` and array `[{
 
 ### Preferences
 
-`~/.seq-mcp-prefs.json` — loaded on every formatter call:
+`~/.seq-mcp-prefs.json` — cached in memory with 60s TTL:
 - `defaultFormat`: compact|table|detail|raw
 - `maxMessageLength`: truncation limit (default 120)
 - `hideFields`: fields hidden in detail view (default: ProcessId, ThreadId, EventId)
@@ -133,7 +133,7 @@ npm run build
 
 ### Test
 ```bash
-npm test          # vitest run (47 unit tests)
+npm test          # vitest run (57 unit tests)
 npm run lint      # eslint + tsc --noEmit
 ```
 
