@@ -77,9 +77,15 @@ export function registerHistoryTools(server: McpServer): void {
           const removed = clearQueriesOlderThan(params.days);
           return respond(`Removed ${removed} queries older than ${params.days} days`);
         }
-        default:
+        case "all":
+        case "queries":
+        case "systems":
           clearHistory(params.what);
           return respond(`Cleared: ${params.what} (file: ${historyFile()})`);
+        default: {
+          const _exhaustive: never = params.what;
+          throw new Error(`Unknown what value: ${String(_exhaustive)}`);
+        }
       }
     }
   );

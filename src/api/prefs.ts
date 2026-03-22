@@ -48,7 +48,11 @@ export function updatePref(key: string, value: unknown): SeqPrefs {
     const valid = ["compact", "table", "detail", "raw"];
     if (!valid.includes(value as string)) throw new Error(`Invalid value for defaultFormat: must be one of ${valid.join(", ")} (got: ${value})`);
   }
-  if (typeof defaultValue === "number") {
+  if (key === "hideFields") {
+    if (typeof value !== "string") throw new Error(`Invalid value for hideFields: must be a comma-separated string (got: ${typeof value})`);
+    const arr = value.split(",").map((s) => s.trim()).filter(Boolean);
+    Object.assign(prefs, { [key]: arr });
+  } else if (typeof defaultValue === "number") {
     const n = Number(value);
     if (!Number.isInteger(n) || n < 1) throw new Error(`Invalid value for ${key}: must be a positive integer (got: ${value})`);
     Object.assign(prefs, { [key]: n });
