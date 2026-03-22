@@ -38,7 +38,7 @@ export class SeqClient {
   private async request<T>(path: string, params: Record<string, string> = {}): Promise<T> {
     const url = new URL(path, this.baseUrl);
     for (const [k, v] of Object.entries(params)) {
-      if (v !== undefined && v !== "") url.searchParams.set(k, v);
+      if (v !== undefined && v !== "" && v !== "undefined") url.searchParams.set(k, v);
     }
     const res = await fetch(url.toString(), {
       headers: { "X-Seq-ApiKey": this.apiKey },
@@ -53,7 +53,7 @@ export class SeqClient {
   private async post<T>(path: string, params: Record<string, string> = {}, body?: unknown): Promise<T> {
     const url = new URL(path, this.baseUrl);
     for (const [k, v] of Object.entries(params)) {
-      if (v !== undefined && v !== "") url.searchParams.set(k, v);
+      if (v !== undefined && v !== "" && v !== "undefined") url.searchParams.set(k, v);
     }
     const res = await fetch(url.toString(), {
       method: "POST",
@@ -74,7 +74,7 @@ export class SeqClient {
   private async requestNdjson(path: string, params: Record<string, string> = {}): Promise<unknown[]> {
     const url = new URL(path, this.baseUrl);
     for (const [k, v] of Object.entries(params)) {
-      if (v !== undefined && v !== "") url.searchParams.set(k, v);
+      if (v !== undefined && v !== "" && v !== "undefined") url.searchParams.set(k, v);
     }
     const res = await fetch(url.toString(), {
       headers: { "X-Seq-ApiKey": this.apiKey },
@@ -187,7 +187,7 @@ export class SeqClient {
 
   async discoverFields(filter: string, sampleSize = 20): Promise<{ fields: Record<string, Set<string>>; sampleCount: number }> {
     const now = Date.now();
-    const cacheKey = `${filter}:${sampleSize}`;
+    const cacheKey = `${filter.trim()}:${sampleSize}`;
     const cached = this.fieldValuesCache.get(cacheKey);
     if (cached && now - cached.fetchedAt < this.CACHE_TTL) return cached.data;
 

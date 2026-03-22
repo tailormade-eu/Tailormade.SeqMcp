@@ -112,6 +112,48 @@ describe("cache key", () => {
   });
 });
 
+describe("undefined string guard", () => {
+  it("search does not send 'undefined' string as URL param", async () => {
+    mockFetch.mockResolvedValueOnce(jsonResponse([]));
+    await client.search({ filter: "undefined", signal: "undefined" });
+
+    const url = new URL(mockFetch.mock.calls[0][0]);
+    expect(url.searchParams.has("filter")).toBe(false);
+    expect(url.searchParams.has("signal")).toBe(false);
+  });
+
+  it("scan does not send 'undefined' string as URL param", async () => {
+    mockFetch.mockResolvedValueOnce(ndjsonResponse([]));
+    await client.scan({ filter: "undefined" });
+
+    const url = new URL(mockFetch.mock.calls[0][0]);
+    expect(url.searchParams.has("filter")).toBe(false);
+  });
+
+  it("query does not send 'undefined' string as URL param", async () => {
+    mockFetch.mockResolvedValueOnce(jsonResponse({ Columns: [], Rows: [] }));
+    await client.query({ q: "select count(*) from stream", signal: "undefined" });
+
+    const url = new URL(mockFetch.mock.calls[0][0]);
+    expect(url.searchParams.has("signal")).toBe(false);
+    expect(url.searchParams.get("q")).toBe("select count(*) from stream");
+  });
+});
+
+describe("cache key trimming", () => {
+  it("trimmed and untrimmed filter hit the same cache entry", async () => {
+    mockFetch.mockResolvedValueOnce(jsonResponse([
+      { Properties: { System: "App1" } },
+    ]));
+
+    const r1 = await client.discoverFields("  MyApp  ", 5);
+    const r2 = await client.discoverFields("MyApp", 5);
+
+    expect(mockFetch).toHaveBeenCalledTimes(1);
+    expect(r1).toBe(r2);
+  });
+});
+
 describe("API key header", () => {
   it("sends X-Seq-ApiKey on requests", async () => {
     mockFetch.mockResolvedValueOnce(jsonResponse([]));
